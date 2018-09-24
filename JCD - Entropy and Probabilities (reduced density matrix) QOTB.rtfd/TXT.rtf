@@ -1,0 +1,141 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1038\cocoasubrtf360
+{\fonttbl\f0\fswiss\fcharset0 Helvetica;\f1\fmodern\fcharset0 Courier;}
+{\colortbl;\red255\green255\blue255;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww17580\viewh14280\viewkind0
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\ql\qnatural\pardirnatural
+
+\f0\fs46 \cf0 addpath('/matlab/QOTB')
+\fs40 \
+N=14\
+photons=13\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\ql\qnatural\pardirnatural
+
+\fs44 \cf0 e=basis(2,1);\
+g=basis(2,2);\
+a=destroy(N);\
+l0=basis(N,photons+1);\
+%l1=basis(N,2);\
+%l2=basis(N,3);\
+%l3=basis(N,4);\
+%l4=basis(N,6);
+\fs40 \
+\
+\
+%for n=1:10\
+%D=w_eg-w_c.. times apo -20<D<20\
+w_eg=1000\
+w_c=1000\
+\
+%Hopping regime\
+J=1\
+G=2*2.8*sqrt(photons)*J\
+ %(J<<G so as eigenstates of each cavity are dressed states)\
+\
+a1=tensor(tensor(tensor(identity(2),a),identity(2)),identity(N));\
+a2=tensor(tensor(tensor(identity(2),identity(N)),identity(2)),a);\
+eg1=tensor(tensor(tensor(e*g',identity(N)),identity(2)),identity(N));\
+ge1=tensor(tensor(tensor(g*e',identity(N)),identity(2)),identity(N));\
+ee1=tensor(tensor(tensor(e*e',identity(N)),identity(2)),identity(N));\
+eg2=tensor(tensor(tensor(identity(2),identity(N)),e*g'),identity(N));\
+ge2=tensor(tensor(tensor(identity(2),identity(N)),g*e'),identity(N));\
+ee2=tensor(tensor(tensor(identity(2),identity(N)),e*e'),identity(N));\
+
+\fs44 for t=1:80
+\fs40 \
+HH10=qo(w_eg* ee1*ee1'+w_c*a1'*a1)\
+HH11=qo(G*(eg1*a1+ge1*a1'))\
+HH20=qo(w_eg*ee2*ee2'+w_c*a2'*a2)\
+HH21=qo(G*(eg2*a2+ge2*a2'))\
+HHhop=qo(J*(a1'*a2+a1*a2'))\
+H=HH10+HH11+HH20+HH21+HHhop\
+[states,evalues] = simdiag([H])\
+%Define Initial state\
+
+\fs44 psi_initial=
+\fs40 tensor(tensor(g,l0),tensor(g,
+\fs44 basis(N,1)
+\fs40 ))
+\fs44 \
+	\
+time=1\
+psi=expm(-i*(H)*time*t)*psi_initial\
+pall=psi*psi'\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\ql\qnatural\pardirnatural
+
+\fs40 \cf0 palll=pall\
+palll=full(double(pall))\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\ql\qnatural\pardirnatural
+
+\fs36 \cf0 %\
+\
+\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\ql\qnatural\pardirnatural
+
+\fs40 \cf0 \
+p1=ptrace(pall,1)\
+p2=ptrace(pall,2)\
+p3=ptrace(pall,3)\
+p4=ptrace(pall,4)\
+pz=ptrace(pall,[3,4])\
+pq=ptrace(pall,[1,4])\
+pw=ptrace(pall,[1,3])\
+pr=ptrace(pall,[2,4])\
+pp=ptrace(pall,[2,3])\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\ql\qnatural\pardirnatural
+
+\fs36 \cf0 patom1=round2(full(double(p1)),3)   % 2x2\
+pfield1=round2(full(double(p2)),3)    % 3x3\
+patom2=round2(full(double(p3)),3)    % 2x2\
+pfield2=round2(full(double(p4)),3)      % 3x3\
+psingle_site=round2(full(double(pz)),3)  % 6x6\
+pcross_site=round2(full(double(pq)),3)   % 6x6\
+pcross_site2=round2(full(double(pp)),3)   % 6x6\
+\
+ptwo_atoms=round2(full(double(pw)),3)   % 4x4\
+ptwo_fields=round2(full(double(pr)),3)   % 6x6\
+clear aa\
+%\
+%\
+[vs,ds]=eigs(psingle_site)\
+[vt,dt]=eigs(ptwo_atoms)\
+[va,da]=eigs(patom1)\
+[vf,df]=eigs(pfield1)\
+[vc,dc]=eigs(pcross_site)\
+\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\ql\qnatural\pardirnatural
+
+\fs40 \cf0 \
+Probabilities_Atom1_g(t)=real(patom1(1,1))\
+Probabilities_field1_1(t)=real(pfield1(2,2))\
+Probabilities_Atom2_g(t)=real(patom2(1,1))\
+Probabilities_field1_0(t)=real(pfield1(1,1))\
+Probabilities_Atom1_e(t)=real(patom1(2,2))\
+\pard\pardeftab720\ql\qnatural
+
+\f1\fs24 \cf0 \
+phnumber1(t)=trace(a1'*a1*pall)\
+phnumber2(t)=trace(a2'*a2*pall)\
+pAtom1sigmaz2(t)=
+\f0\fs40 real(patom1(2,2))-real(patom1(1,1))
+\f1\fs24 \
+pAtom2sigmaz2(t)=
+\f0\fs40 real(patom2(2,2))-real(patom2(1,1))
+\f1\fs24 \
+\pard\pardeftab720\ql\qnatural
+
+\fs28 \cf0 \
+Z2(t)=(phnumber1(t)-phnumber2(t))/(photons);
+\fs24 \
+\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\ql\qnatural\pardirnatural
+
+\f0\fs40 \cf0 \
+\
+\
+%\
+end\
+\
+\
+\
+\
+}

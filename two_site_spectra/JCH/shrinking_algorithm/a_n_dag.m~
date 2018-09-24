@@ -1,0 +1,40 @@
+function operator = Entanglement(rhoES,tlist)
+
+% Function to return the reduced density matrix of rhoES
+% and entanglement 
+% Works for rhoES as expomential seriew with Tlist 
+
+p1=ptrace(rhoES,1); %CAVITY1
+p2=ptrace(rhoES,2); %ATOM1
+p3=ptrace(rhoES,3); %CAVITY2
+p4=ptrace(rhoES,4); %ATOM2
+pz=ptrace(rhoES,[3,4]); %FIELD2+ATOM2 -> Single-site2
+pq=ptrace(rhoES,[1,4]); %FIELD1+ATOM2 -> Cross-site2 
+pw=ptrace(rhoES,[1,3]); %FIELD1+FIELD2 -> Two-cavities
+pr=ptrace(rhoES,[2,4]); %ATOM1+ATOM2 -> Two atoms
+pp=ptrace(rhoES,[2,3]); %ATOM1+FIELD2 -> Cross-site1
+psf=ptrace(pw,1); 
+
+rhoF=full(double(esval(rhoES,tlist)));
+
+%rhoF(:,:,1,1)
+p1_n=full(double(esval(p1,tlist)));
+p2_n=full(double(esval(p2,tlist)));
+p3_n=full(double(esval(p3,tlist)));
+p4_n=full(double(esval(p4,tlist)));
+pz_n=full(double(esval(pz,tlist)));
+pq_n=full(double(esval(pq,tlist)));
+pw_n=full(double(esval(pw,tlist)));
+pr_n=full(double(esval(pr,tlist)));
+pp_n=full(double(esval(pp,tlist)));
+psf_n=full(double(esval(psf,tlist)));
+
+
+
+
+
+
+
+
+
+end
